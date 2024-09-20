@@ -1,0 +1,118 @@
+- Multi-threading is a Java feature that allows concurrent execution of 2 or more parts of a program for maximum CPU utilization.
+- Used to in Java to make application run faster by doing multiple things at the same time.
+
+
+Thread :
+- A light-weight process that executes some task.
+
+### Single Thread
+- Single thread is a smallest unit of programming.
+- There are 2 types of thread :
+  - user Thread
+    - When the application is created for the first time, the user thread gets created for the first time.
+    - From this thread, we can spun as many user and deamon threads as possible.
+  - Daemon Thread
+    - They are used for cleanup tasks in the background.
+- Example :
+    ```
+        public class Main{
+            public static void main(String[] args){
+                System.out.println("A single thread is running");
+            }
+        }
+    ```
+
+
+
+
+### Multiple Threads
+- Multiple threads run in parallel to each other and share common resources like CPU and memory.
+    ```
+
+        public class MultipleThreads{
+            public static void main(String[] args){
+                Thread t1 = new Thread("Thread 1");
+                Thread t2 = new Thread("Thread 2");
+
+                t1.start();
+                t2.start();
+
+                System.out.println(t1.getName()); // t1
+                System.out.println(t2.getName()); // t2
+            }
+        }
+    ```
+
+### Thread Lifecycle :
+- `new `: When a thread is initalized using `Thread t = new Thread(<task>)`, a new thread gets created.
+- `runnable` : Thread gets invoked by the start method. The thread control is given to the schduler to complete the action.
+- `running` : When thread starts executing, the state is changed to running state.
+- `blocked` : When the thread is temporarily inactive due to lock obtained by another thread. Any thread in this state doesnot consume any cpu cycle.
+- `waiting` : Timed waiting state, when the thread is waiting for the notification or timeout.
+- `dead` : When the thread is terminated after completing all the operations. 
+
+
+### Sequential Processing :
+
+
+
+### Parallel processing :
+#### runnable and callable :
+- This is an interface that supports parallel programming, they create tasks which can be run using threads.
+- These are extended by every class whose object should run the task.
+- `runnable` is used when the task doesn't return anything.
+- `callable` is used when the task returns something that needs to be caught in the Future and used.
+- Each of object of classes those implements runnable or callable returns tasks objects, that are passed as parameters in the thread.
+
+
+### Lambda expression :
+
+- A lambda expression is an anonymous function. 
+- It doesn't have any name and it doesn't belong to any class.
+    ```
+        ()          ->              {}
+        i/p                         body
+    ```
+- It is mainly used to implement functional interfaces. 
+- Any interface with a SAM(single Abstract method) is a functional interface, and it's implementation may be treated as lambda expression.
+  
+Example :
+    ```
+        @FunctionalInterface
+        public interface runnable{
+            public abstract void run();
+        }
+
+        @FunctionalInterface
+        public interface Comparator<T>{
+            int compare(T o1,T o2);
+        }
+
+        @FunctionalInterface
+        public interface Callable<V>{
+            V call() throws Exception;
+        }
+    ```
+- Example for the usage of the lambda functions :
+  ```
+    public interface HelloWorldInterface{
+        public String sayHello();
+    }
+
+
+    public class Main{
+        public static void main(String [] args){
+            HelloWorldInterface hw = () ->{
+                return "Hello World!";
+            };
+
+            System.out.println(hw.sayhello()); 
+            
+            // o/p : Hello World!
+        }
+    }
+
+  ```
+
+https://github.com/ssahmed72/modernthreading.git
+https://github.com/ssahmed72/LambdaExpression.git
