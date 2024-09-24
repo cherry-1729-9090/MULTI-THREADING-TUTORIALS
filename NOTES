@@ -114,5 +114,445 @@ Example :
 
   ```
 
+### Synchronized
+- When a piece of code is having the synchronized key word in it, that part of code is only accessible to only one of the thread and it is used to avoid situations like lock.
+- If more than one thread are dependent one single resource or single block of code, using this key word makes the thread like only one thread can be access that resource and remaining will wait.
+
+
+
+
+### Join 
+- `join()` method allows one thread to wait for the completion of another thread.
+- When we invoke the `join()` function on one thread, the calling thread goes into the waiting state, it remains in the waiting state until the referenced thread terminates.
+- The join method will keep waiting of the referenced thread is blocked which can be an issue as calling thread will be non responsive. 
+- Java provide overload version of the `join()` method that takes timeout period.
+- Join throws `InterreptedException` if the referenced thread is interrepted.
+- If the referenced thread is unable to start or already terminated, join thread will return immediately.
+
+## Volatile :
+- This key word is used to declare to CPU not to cache that variable or entity and indicate threads to always read that entity from the main memory. 
+- Variables can be defined as volatile, methods and classes cannot be volatile.
+- In Java, reads and writes are atomic for all variables declared volatile.
+- If a variable is not shared between threads, donot use volatile.
+- The volatile keyword in Java is used to ensure visibility of changes to variables across threads in a multi-threaded environment. It guarantees that updates made by one thread to a variable are immediately visible to other threads, preventing issues where threads operate on stale or cached data.
+- Normally, each thread can keep its own local copy of a variable in its CPU cache, which may lead to inconsistencies. volatile ensures that the value of the variable is always read from the main memory (not from a thread's local cache).
+- It is like every thread will keep a cache for variables and if more than one thread is working on the same variable, if one thread changes the value then it won't be visible to all the threads because of their cached values and if we use the volatile key word, then the threads don't keep the variable in cache and perform operations on main memory only.
+
+
+
+
+### Deadlock :
+- The situation where threads are waiting for each other to release the lock. There may be situations where a thread is waiting for an object lock, that is acquired by another thread and second thread is waiting for an object lock that is acquired by first thread. Since both threads are waiting for each other to release the lock the condition is called deadlock.
+
+### Livelock :
+- Livelock is same as dead lock but threads try to resolve the problem on themselves by reverting back and all.
+- A live lock happens when the combination of these processes efforts to resolve the problem make it impossible for them to ever terminate.
+- Example : If 2 persons are passing in the corridor, and one is very polite to other by asking the other person to go first and in this way no one will reach the other side.
+
+
+
+### **Synchronization in Java:**
+Imagine you're at a bank, and there's only one clerk available to assist customers. The bank can only serve **one customer at a time** to ensure no confusion or errors. Similarly, **synchronization in Java** ensures that only one thread can access a shared resource (like data or objects) at any given time.
+
+#### **Key Points:**
+1. **Multiple threads** accessing the same resource can lead to **inconsistent behavior** (similar to several people speaking to the bank clerk at once).
+2. **Synchronization** controls this interaction by restricting access, ensuring data integrity.
+
+#### **Two Types of Synchronization:**
+
+1. **Mutual Exclusion** (Only one thread at a time, like only one customer at the counter).
+2. **Cooperation** (Threads communicating, like a clerk calling the next customer in line).
+
+#### **Three Ways to Achieve Mutual Exclusion:**
+1. **Synchronized Methods**
+2. **Synchronized Blocks**
+3. **Static Synchronization**
+
+---
+
+### **Intrinsic Lock (Monitor Lock):**
+Imagine every person has a key to a private locker (an object in Java). **The locker can only be opened by one person at a time.** In Java, **every object has an intrinsic lock**. When a thread enters a synchronized block or method, it **acquires** this lock. 
+
+#### **Key Acronym:**
+- **TLL**: **Thread Lock Logic** – Each thread needs to **lock** the object before accessing it.
+
+#### **1. Synchronized Method Example:**
+When a thread calls a synchronized method, it locks the object.
+
+```java
+class Counter {
+    private int count = 0;
+    
+    // Only one thread can enter this method at a time
+    public synchronized void increment() {
+        count++;  // Locks the object to ensure consistent increments
+    }
+    
+    public int getCount() {
+        return count;
+    }
+}
+```
+
+**Real-life example:** Imagine two people trying to update a single bank account balance at the same time. Only one person can access the account at a time to avoid calculation errors.
+
+#### **2. Synchronized Static Method Example:**
+Here, the **intrinsic lock is on the class**, meaning **all instances of the class share the same lock**.
+
+```java
+class SharedCounter {
+    private static int count = 0;
+
+    public static synchronized void increment() {
+        count++;  // All instances of SharedCounter share the same lock
+    }
+
+    public static int getCount() {
+        return count;
+    }
+}
+```
+
+**Explanation:** Think of it like **shared office equipment**. No matter how many people (instances) are using it, only one person can operate it at a time.
+
+#### **3. Synchronized Block Example:**
+In synchronized blocks, you can **lock specific parts of the code** rather than the entire method.
+
+```java
+class BankAccount {
+    private int balance = 1000;
+    private final Object lock = new Object();
+
+    public void deposit(int amount) {
+        synchronized (lock) {  // Only this block is synchronized
+            balance += amount;
+        }
+    }
+
+    public int getBalance() {
+        return balance;
+    }
+}
+```
+
+**Explanation:** Imagine a store where only a **specific section** is locked (e.g., the cash register). Customers can still browse the store, but only one customer can access the register at a time.
+
+---
+
+### **Wait(), Notify(), and NotifyAll():**
+These methods are for **inter-thread communication**. Imagine **a queue at the doctor’s office**. The clerk can call patients one by one, ask them to wait, or notify everyone that it's their turn.
+
+#### **Key Acronym:**
+- **WNC**: **Wait, Notify, Communicate** – Threads **wait** for a condition, and other threads **notify** them when it's their turn.
+
+#### **Real-Life Example:**
+Imagine you and your friends are sharing a single car. If one person is driving, others wait for their turn. When the driver finishes, they signal (notify) the next person to take over.
+
+#### **How These Methods Work:**
+
+1. **`wait()`**: The thread that calls `wait()` goes to sleep (releases the lock) and waits until another thread calls `notify()` or `notifyAll()`.
+    - **Example**: A thread (customer) waits until the clerk (another thread) calls them.
+    - **Important**: Must be called within a `synchronized` block or method, or else it throws `IllegalMonitorStateException`.
+
+2. **`notify()`**: When a thread calls `notify()`, it **wakes up** one thread waiting on that object. 
+    - **Example**: Imagine the clerk calling the next customer to the counter.
+
+3. **`notifyAll()`**: This wakes up **all waiting threads**, but they still compete for the lock (like all customers being called at once, but only one can go to the counter).
+   
+---
+
+### **Wait(), Notify(), and NotifyAll() Example:**
+
+```java
+class Data {
+    private boolean ready = false;
+
+    public synchronized void produce() throws InterruptedException {
+        System.out.println("Producing data...");
+        ready = true;
+        notify();  // Notify one waiting thread
+    }
+
+    public synchronized void consume() throws InterruptedException {
+        while (!ready) {
+            wait();  // Wait until data is ready
+        }
+        System.out.println("Consuming data...");
+    }
+}
+```
+
+#### **Explanation with Real-Life Analogy:**
+- **Producer (doctor)**: Prepares medical reports (data) and calls a patient (thread) using `notify()`.
+- **Consumer (patient)**: Waits in the waiting room (`wait()`) until the doctor is ready (calls `notify()`).
+  
+
+### **Key Points About Intrinsic Locks:**
+1. **Synchronized Methods**: The lock is the object (`this`) that calls the method. Only one thread can access the method at a time.
+2. **Static Synchronized Methods**: The lock is on the class itself, meaning all instances of the class share the lock.
+3. **Synchronized Blocks**: You can control the **scope of the lock**, specifying which object to lock (not just `this`).
+
+
+### **Final Notes on Synchronization:**
+1. **Synchronization ensures thread safety**, but it can impact performance. Only one thread can hold the lock, which limits concurrency.
+2. **Use synchronization sparingly**. The larger the synchronized block or method, the more performance can be impacted (similar to long lines at the bank if only one customer can access the clerk).
+3. **Minimize synchronized code** by locking only what’s necessary to avoid bottlenecks.
+
+
+---
+
+### **Lock in Java**
+
+A **Lock** is a thread synchronization mechanism, similar to synchronized blocks, but more flexible and sophisticated. Locks allow greater control over thread interactions with shared resources compared to `synchronized`. Since `Lock` is an interface, we need to use one of its implementations in our code. The most common implementation is the **Reentrant Lock**.
+
+
+### **Difference Between Lock Interface and Synchronized Keyword:**
+
+1. **Timeout Handling**:
+   - **Synchronized blocks** do not provide a timeout mechanism. 
+   - With `Lock.tryLock(long timeout, TimeUnit timeUnit)`, threads can attempt to acquire a lock for a specific duration, giving up if the lock isn't available in that time.
+
+2. **Granularity of Locking**:
+   - **Synchronized blocks** require locking and unlocking to occur within the same method, which can limit flexibility.
+   - **Locks** allow the lock and unlock operations to be performed in different methods or parts of the code, offering more granular control.
+
+
+### **Reentrant Lock (ReentrantLock)**
+
+A **Reentrant Lock** is a lock that a thread can **enter multiple times**. This means a thread holding the lock can reacquire it without blocking. The lock maintains a **hold count** to track how many times it has been acquired by the current thread.
+
+#### **How It Works:**
+1. When a thread first acquires the lock, the hold count is set to **1**.
+2. Each time the thread re-enters the lock (calls `lock()` again), the hold count increments by **1**.
+3. When the thread calls `unlock()`, the hold count decreases by **1**. 
+4. Once the hold count reaches **0**, the lock is released.
+
+#### **Fairness Mode**:
+- The Reentrant Lock has an optional **fairness parameter**. If fairness is enabled (by passing `true` in the constructor), the lock will be granted to the **longest waiting thread**, ensuring **first-come, first-served** behavior.
+- By default, fairness is **not enabled**, meaning the order in which threads acquire the lock is not guaranteed.
+
+
+### **Reentrant Lock Methods:**
+
+1. **`lock()`**:
+   - **Acquires the lock** and increments the hold count by one if the lock is free.
+   - If the lock is unavailable, the thread waits until it becomes free.
+
+   ```java
+   Lock lock = new ReentrantLock();
+   lock.lock();
+   try {
+       // Critical section
+   } finally {
+       lock.unlock();  // Always unlock in the 'finally' block
+   }
+   ```
+
+   **Real-life Example**: Imagine a key to a room. If the room is free, the person can enter and lock the door behind them. If someone is already inside, others must wait.
+
+2. **`unlock()`**:
+   - **Releases the lock** by decrementing the hold count.
+   - When the hold count reaches **0**, the lock is released, and other threads can acquire it.
+
+   ```java
+   lock.unlock();  // Decrements the hold count
+   ```
+
+   **Real-life Example**: After leaving a room, you unlock the door. If you re-entered the room multiple times, you must unlock it the same number of times before others can enter.
+
+3. **`tryLock()`**:
+   - Attempts to acquire the lock without waiting. 
+   - If the lock is available, it acquires it and increments the hold count by one. If not, it **immediately returns `false`** instead of waiting.
+
+   ```java
+   if (lock.tryLock()) {
+       try {
+           // Critical section
+       } finally {
+           lock.unlock();
+       }
+   } else {
+       // Lock was not available, proceed without locking
+   }
+   ```
+
+   **Real-life Example**: Knocking on a door and, if nobody responds, you leave instead of waiting.
+
+4. **`tryLock(long timeout, TimeUnit timeUnit)`**:
+   - Similar to `tryLock()`, but the thread waits for a **specified amount of time** before giving up if the lock is not available.
+
+   ```java
+   if (lock.tryLock(5, TimeUnit.SECONDS)) {
+       try {
+           // Critical section
+       } finally {
+           lock.unlock();
+       }
+   } else {
+       // Lock was not acquired within the timeout period
+   }
+   ```
+
+   **Real-life Example**: You wait outside a room for a certain period before deciding to leave if it's still occupied.
+
+5. **`lockInterruptibly()`**:
+   - Allows a thread to acquire the lock, but if another thread **interrupts** it while waiting, the waiting thread **immediately stops** and returns without acquiring the lock.
+
+   ```java
+   try {
+       lock.lockInterruptibly();
+       // Critical section
+   } catch (InterruptedException e) {
+       // Handle the interruption
+   } finally {
+       lock.unlock();
+   }
+   ```
+
+   **Real-life Example**: You’re waiting for a meeting room. If someone calls you and asks you to attend another meeting, you immediately leave the queue.
+
+
+### **Key Points:**
+- **Locks** provide more flexibility than the `synchronized` keyword. They allow features like timeouts, interruptibility, and the ability to lock/unlock across methods.
+- **Reentrant Lock** allows the same thread to acquire a lock multiple times, ensuring consistency while reducing thread blocking.
+- Always ensure that **`unlock()` is called in a `finally` block** to prevent deadlocks (where a thread waits indefinitely for a lock that is never released).
+
+### **Final Notes:**
+- **Locks** offer more control than synchronized blocks but should be used carefully.
+- **Reentrant Lock** is useful when a thread may need to acquire the same lock multiple times.
+- **Fairness** comes at a performance cost, so use it only if thread order is critical to the application.
+
+
+---
+
+### Semaphore
+- class in `java.util.concurrent` package
+- Semaphores are generally used to restrict the number of threads to access resources.
+- They basically maintains a set of permits through use of counter.
+- If the counter is greater than zero, then access is allowed. If it is zero, then access is denied.
+- If the semaphore count is greater than zero, then the thread acquires permit, which causes the semaphore's count to be decremented.
+- Other wise, the thread is block until a permit can be acquired.
+- A thread release the permit when the thread no longer need an access to the shared resource and thereby increasing the counter.
+- If a thread is waiting for permit, it will acquire the permit and continue its execution.
+- 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 https://github.com/ssahmed72/modernthreading.git
 https://github.com/ssahmed72/LambdaExpression.git
